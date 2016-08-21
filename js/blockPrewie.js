@@ -1,6 +1,7 @@
 (function( exports ) {
 
     const
+
         HEIGHTSCROLL = 300,
         ANIMATION_TIME = 300;
 
