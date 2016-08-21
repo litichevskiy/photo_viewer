@@ -5,6 +5,9 @@
     overflow: hidden;
     box-sizing: border-box;
     display: none;
+    -webkit-user-select: none;
+   -moz-user-select: none;
+   -ms-user-select: none;
 }
 .userInfo{
     display: none;

@@ -1,5 +1,9 @@
 (function( exports ) {
 
+    const
+        HEIGHTSCROLL = 300,
+        ANIMATION_TIME = 300;
+
     function BlockPrewie( data ) {
 
         this.container = data.container;
@@ -38,7 +42,7 @@
 
         var fragment = document.createDocumentFragment(),
             that = this,
-            element;
+            element, data;
 
         list.forEach(function( item ) {
 
@@ -62,6 +66,9 @@
 
         this.pubsub.publish( 'new_img', this.storage[0] );
         this.changeActiveElement( this.list.children[0] );
+        data = this.getHeight( this.container, this.list );
+
+        if( data ) this.addEventScroll( data );
     };
 
 
@@ -92,13 +99,92 @@
 
                 that.pubsub.publish( 'new_img', item );
                 return false;
-
             }
 
             return true;
         })
-
     };
+
+    BlockPrewie.prototype.getHeight = function( parent, children ) {
+
+        var parentHeight = $(parent).height(),
+            childrenHeight = $(children).height(),
+            data;
+
+        if( childrenHeight > parentHeight ) {
+
+            data = addScrollElements( parent, children );
+
+            return data;
+        }
+    };
+
+    BlockPrewie.prototype.addEventScroll = function( data ) {
+
+        this.up = data.up;
+        this.down = data.down;
+
+        $(this.container).scrollTop( 9000000000 ); // px
+
+        var that = this,
+            counter = 0,
+            heightScrollParent = $(this.container).scrollTop();
+
+        $(this.container).scrollTop(0);
+
+        $(this.up).click(function( event ) {
+            counter =  $(that.container).scrollTop() - HEIGHTSCROLL;
+            // counter -= HEIGHTSCROLL;
+
+            if( counter > 0 ) {
+
+                scrollPrewie( that.container, counter );
+
+            } else {
+
+                counter = 0;
+                scrollPrewie( that.container, counter );
+            }
+        });
+
+        $(this.down).click(function( event ) {
+
+            counter =  $(that.container).scrollTop() + HEIGHTSCROLL;
+            // counter -= HEIGHTSCROLL;
+
+            if( counter < heightScrollParent ) {
+
+                scrollPrewie( that.container, counter );
+
+            } else {
+
+                counter = heightScrollParent;
+                scrollPrewie( that.container, counter );
+            }
+        });
+    };
+
+    function scrollPrewie( htmlElement, value ) {
+
+        $(htmlElement).animate({
+                scrollTop : value },
+                { scrollTop : 'ease-out', scrollTop : ANIMATION_TIME
+            });
+    }
+
+    function addScrollElements( parent, children ) {
+
+        var up = $('<div class="scrollUp">&#8593;</div>'),
+            down = $('<div class="scrollDown">&#8595;</div>');
+
+            $(parent).append( up );
+            $(parent).append( down );
+
+        return {
+            up   : up,
+            down : down
+        }
+    }
 
     exports.BlockPrewie = BlockPrewie;
 

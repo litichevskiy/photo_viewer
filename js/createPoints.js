@@ -18,6 +18,12 @@
 
             element = $('<div class="point" data-name="'+item.point+'"></div>');
 
+            if( item.x < 0 || item.x > 100 || item.y < 0 || item.y > 100 ) {
+
+                item.x = Math.ceil( Math.random() * 100 );
+                item.y = Math.ceil( Math.random() * 100 );
+            }
+
             $(element).css({
                 'top'  : item.x + '%',
                 'left' : item.y + '%'
