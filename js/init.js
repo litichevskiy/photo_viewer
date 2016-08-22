@@ -5,7 +5,7 @@
             pubsub    : pubsub,
             container : document.querySelector('.container_photo_viewer'),
             userInfo  : document.querySelector('.userInfo'),
-            alert  : document.querySelector('.alert')
+            alert     : document.querySelector('.alert')
         }),
 
         createPoints = new CreatePoints({
@@ -15,7 +15,8 @@
         blockPrewie = new BlockPrewie({
             pubsub    : pubsub,
             container : document.querySelector('.block_prewie'),
-            list      : document.querySelector('.list_prewie')
+            list      : document.querySelector('.list_prewie'),
+            main      : document.querySelector('.container_photo_viewer')
         }),
 
         blockMain = new BlockMain({
@@ -25,6 +26,12 @@
         });
 
     pubsub.publish( 'init', 'loading' );
+    pubsub.publish( 'setWidth', document.body.clientWidth );
+
+    window.onresize = function( event ) {
+        pubsub.publish( 'setWidth', document.body.clientWidth );
+        pubsub.publish( 'changeImg', document.body.clientWidth );
+    }
 
     setTimeout(function(){
 
