@@ -22,10 +22,12 @@
         blockMain = new BlockMain({
             pubsub    : pubsub,
             container : document.querySelector('.block_main'),
+            wrapper   : document.querySelector('.wrapper'),
+            load   : document.querySelector('.loading_img'),
             mainPhoto : document.querySelector('.main_photo')
         });
 
-    pubsub.publish( 'init', 'loading' );
+    pubsub.publish( 'init' );
     pubsub.publish( 'setWidth', document.body.clientWidth );
 
     window.onresize = function( event ) {

@@ -3,9 +3,13 @@
     function BlockMain( data ) {
 
         this.container = data.container;
+        this.wrapper = data.wrapper;
         this.pubsub = data.pubsub;
         this.mainPhoto = data.mainPhoto;
         this.wrapper = $(this.container).find('.wrapper')[0];
+        this.loadImg = data.load;
+
+        this.showImg = this.showMainImg.bind( this );
 
         this.pubsub.subscribe( 'new_img', this.changePhoto.bind( this ) );
 
@@ -22,16 +26,18 @@
 
     BlockMain.prototype.changePhoto = function( data ) {
 
-        var that = this;
-
+        $(this.wrapper).css({ 'opacity' : '0'});
+        $(this.loadImg).css({ 'opacity' : '1'});
         this.mainPhoto.src = data.big;
+
+        this.mainPhoto.addEventListener( 'load', this.showImg );
 
         if( data.points.length > 0 ) {
 
-            checkPoints( that.wrapper, '.point' );
+            checkPoints( this.wrapper, '.point' );
 
-            that.pubsub.publish( 'create_point', {
-                parent : that.wrapper,
+            this.pubsub.publish( 'create_point', {
+                parent : this.wrapper,
                 points : data.points
             });
         }
@@ -51,6 +57,11 @@
             });
         }
     };
+
+    BlockMain.prototype.showMainImg = function() {
+        $(this.wrapper).css({ 'opacity' : '1' });
+        $(this.loadImg).css({ 'opacity' : '0'});
+    }
 
     exports.BlockMain = BlockMain;
 

@@ -38,7 +38,7 @@
 
     PhotoViewer.prototype.showUserMessageInit = function( text ) {
         $(this.userMessage).show( 0 );
-        $(this.userMessage).html( text );
+        $(this.userMessage).html();
     };
 
     PhotoViewer.prototype.showUserMessage = function( text ) {

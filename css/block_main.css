@@ -31,3 +31,13 @@
     width: 2em;
     height: 2em;
 }
+.loading_img{
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    text-align: center;
+    font-size: 2em;
+    font-family: cursive;
+    color: rgb( 42, 168, 247 );
+    opacity: 0;
+}
