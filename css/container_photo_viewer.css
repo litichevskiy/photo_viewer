@@ -29,6 +29,11 @@
     top: 3%;
     left: 2%;
 }
+.alert span{
+    color: rgb( 247, 83, 83 );
+    font-size: 1.5em;
+    text-decoration: underline;
+}
 .close{
     text-align: right;
     color: rgb(33, 150, 243);

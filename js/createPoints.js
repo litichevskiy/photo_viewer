@@ -3,9 +3,8 @@
     function CreatePoints( data ) {
 
         this.pubsub = data.pubsub;
-
         this.pubsub.subscribe( 'create_point', this.addPoint.bind( this ) );
-    }
+    };
 
     CreatePoints.prototype.addPoint = function( data ) {
 

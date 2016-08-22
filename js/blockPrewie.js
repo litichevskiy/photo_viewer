@@ -1,10 +1,10 @@
 (function( exports ) {
 
     const
-
-        HEIGHT_SCROLL = 300, // px
-        ANIMATION_TIME = 300, // ms
-        MIN_WIDTH = 550; // px
+        HEIGHT_SCROLL = 300,      // px
+        WIDTH_SCROLL = 200,       // px
+        MIN_WIDTH_VIEWPORT = 900, // px
+        ANIMATION_TIME = 300;     // ms
 
     function BlockPrewie( data ) {
 
@@ -15,8 +15,7 @@
         this.mainContainer = data.main;
 
         this.pubsub.subscribe( 'listImages', this.createList.bind( this ) );
-        this.pubsub.subscribe( 'setWidth', this.setWidth.bind( this ) );
-        this.pubsub.subscribe( 'changeImg', this.changeImg.bind( this ) );
+        this.pubsub.subscribe( 'changeClass', this.changeClass.bind( this ) );
 
         var that = this,
             target;
@@ -26,32 +25,39 @@
             target = event.target;
 
             if( target.tagName === 'IMG' ) {
-
                 that.changeActiveElement( target.parentElement );
-
-                if( that.widthMainBlock > MIN_WIDTH ) {
-
-                    that.searchId( +target.dataset.id );
-                }
+                that.searchId( +target.dataset.id );
 
             } else
-
                 if ( target.tagName === 'DIV' ) {
-
                     that.pubsub.publish( 'message', target.dataset.name );
                 }
         });
-    }
+    };
+
+    BlockPrewie.prototype.changeClass = function( data ) {
+
+        if( data < MIN_WIDTH_VIEWPORT ) {
+            $(this.container).removeClass('horisontal');
+            $(this.container).addClass('vertical');
+        } else
+            if( data > MIN_WIDTH_VIEWPORT ) {
+                $(this.container).removeClass('vertical');
+                $(this.container).addClass('horisontal');
+            }
+    };
 
     BlockPrewie.prototype.createList = function( list ) {
 
-        if ( list.length < 1 ) throw('error')
+        if ( list.length < 1 ) throw('link list is empty');
 
         this.storage = list;
 
         var fragment = document.createDocumentFragment(),
             that = this,
-            element, data;
+            element,
+            dataHeight,
+            dataWidth;
 
         list.forEach(function( item ) {
 
@@ -75,11 +81,40 @@
 
         this.pubsub.publish( 'new_img', this.storage[0] );
         this.changeActiveElement( this.list.children[0] );
-        data = this.getHeight( this.container, this.list );
+        dataHeight = this.getHeight( this.container, this.list );
+        dataWidth = this.getWidth( this.list );
 
-        if( data ) this.addEventScroll( data );
+        if( dataHeight ) this.addEventScrollTop( dataHeight );
+        if( dataWidth ) this.addEventScrollLeft( dataWidth );
     };
 
+    BlockPrewie.prototype.getWidth = function( listImg ) {
+
+        listImg.children.reduce = [].reduce;
+
+        var width = listImg.children.reduce(function( result, item ) {
+            return result + item.clientWidth;
+        }, 0 );
+
+        if( width > document.body.clientWidth ) {
+            var data = addScrollElementsLeft( this.container );
+            return data;
+        }
+    };
+
+    function addScrollElementsLeft( parent ) {
+
+        var left = $('<div class="scroll_left">&larr;</div>'),
+            right = $('<div class="scroll_right">&rarr;</div>');
+
+            $(parent).append( left );
+            $(parent).append( right );
+
+        return {
+            left  : left,
+            right : right
+        }
+    };
 
     BlockPrewie.prototype.changeActiveElement = function( element ) {
 
@@ -114,75 +149,88 @@
         })
     };
 
-    BlockPrewie.prototype.getHeight = function( parent, children ) {
+    BlockPrewie.prototype.getHeight = function( parent, listImg ) {
 
-        var parentHeight = $(parent).height(),
-            childrenHeight = $(children).height(),
-            data;
+        listImg.children.reduce = [].reduce;
 
-        if( childrenHeight > parentHeight ) {
+        var height = listImg.children.reduce(function( result, item ) {
+            return result + item.clientHeight;
+        }, 0 );
 
-            data = addScrollElements( parent, children );
-
+        if( height > parent.clientHeight ) {
+            var data = addScrollElementsTop( this.container );
             return data;
         }
     };
 
-    BlockPrewie.prototype.addEventScroll = function( data ) {
+    BlockPrewie.prototype.addEventScrollLeft = function( data ) {
+
+        this.left = data.left;
+        this.right = data.right;
+
+        var that = this,
+            left, right;
+
+        $(this.left).click(function( event ) {
+
+            left = $(that.container).scrollLeft();
+
+            scrollPrewieLeft( that.container, left -= WIDTH_SCROLL );
+        });
+
+        $(this.right).click(function( event ) {
+
+            right = $(that.container).scrollLeft();
+
+            scrollPrewieLeft( that.container, right += WIDTH_SCROLL );
+        });
+
+        addEventDragnDrop( this.left[0], this.mainContainer );
+        addEventDragnDrop( this.right[0], this.mainContainer );
+    };
+
+    BlockPrewie.prototype.addEventScrollTop = function( data ) {
 
         this.up = data.up;
         this.down = data.down;
 
-        $(this.container).scrollTop( 9000000000 ); // px
-
         var that = this,
-            counter = 0,
-            heightScrollParent = $(this.container).scrollTop();
-
-        $(this.container).scrollTop(0);
+            up, down;
 
         $(this.up).click(function( event ) {
-            counter =  $(that.container).scrollTop() - HEIGHT_SCROLL;
+            up = $(that.container).scrollTop();
 
-            if( counter > 0 ) {
-
-                scrollPrewie( that.container, counter );
-
-            } else {
-
-                counter = 0;
-                scrollPrewie( that.container, counter );
-            }
+            scrollPrewieTop( that.container, up - HEIGHT_SCROLL );
         });
 
         $(this.down).click(function( event ) {
 
-            counter =  $(that.container).scrollTop() + HEIGHT_SCROLL;
+            down =  $(that.container).scrollTop();
 
-            if( counter < heightScrollParent ) {
-
-                scrollPrewie( that.container, counter );
-
-            } else {
-
-                counter = heightScrollParent;
-                scrollPrewie( that.container, counter );
-            }
+            scrollPrewieTop( that.container, down + HEIGHT_SCROLL );
         });
 
         addEventDragnDrop( this.down[0], this.mainContainer );
         addEventDragnDrop( this.up[0], this.mainContainer );
     };
 
-    function scrollPrewie( htmlElement, value ) {
+    function scrollPrewieTop( htmlElement, value ) {
 
         $(htmlElement).animate({
                 scrollTop : value },
                 { scrollTop : 'ease-out', scrollTop : ANIMATION_TIME
             });
-    }
+    };
 
-    function addScrollElements( parent, children ) {
+    function scrollPrewieLeft( htmlElement, value ) {
+
+        $(htmlElement).animate({
+                scrollLeft : value },
+                { scrollLeft : 'ease-out', scrollLeft : ANIMATION_TIME
+            });
+    };
+
+    function addScrollElementsTop( parent ) {
 
         var up = $('<div class="scrollUp">&#8593;</div>'),
             down = $('<div class="scrollDown">&#8595;</div>');
@@ -198,7 +246,7 @@
 
     function addEventDragnDrop( htmlElement, parent ) {
 
-        htmlElement.addEventListener('mousedown', function( event ){
+        htmlElement.addEventListener('mousedown', function( event ) {
 
             function moveElement( event ) {
 
@@ -216,33 +264,6 @@
             };
         });
     };
-
-    BlockPrewie.prototype.setWidth = function( data ) {
-        this.widthMainBlock = data;
-    };
-
-    BlockPrewie.prototype.changeImg = function( data ) {
-
-        var listImg = $(this.container).find('.small_photo'),
-            that = this;
-
-        if ( data <= MIN_WIDTH ) {
-
-            this.storage.forEach( function( item, i ) {
-
-                listImg[i].src = item.big;
-            });
-
-        } else
-
-            if ( data >= MIN_WIDTH ) {
-
-                this.storage.forEach( function( item, i ) {
-
-                    listImg[i].src = item.small;
-                });
-            }
-    }
 
     exports.BlockPrewie = BlockPrewie;
 

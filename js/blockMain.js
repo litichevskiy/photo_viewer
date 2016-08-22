@@ -12,11 +12,10 @@
         var that = this;
 
         $(this.container).click(function( event ) {
-            var target = event.target;
 
-            if( target.tagName === 'DIV' ) {
+            if( event.target.tagName === 'DIV' ) {
 
-                that.pubsub.publish( 'message', target.dataset.name );
+                that.pubsub.publish( 'message', event.target.dataset.name );
             }
         });
     }
@@ -51,7 +50,7 @@
                 parent.removeChild( item );
             });
         }
-    }
+    };
 
     exports.BlockMain = BlockMain;
 

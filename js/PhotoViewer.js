@@ -43,7 +43,7 @@
 
     PhotoViewer.prototype.showUserMessage = function( text ) {
         $(this.alert).show( 0 );
-        $(this.contentAlert).html( CONTENT + text );
+        $(this.contentAlert).html( CONTENT + '<span>'+text+'</span>' );
 
         this.alertActive = true;
     };

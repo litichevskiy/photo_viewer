@@ -13,36 +13,40 @@
         height: 130px;
     }
 }
-@media(max-width: 650px){
-    .scrollUp,
-    .scrollDown{
-        display: none;
+@media(max-width:900px){
+    .block_main{
+        width: 100vw;
+        height: 69.5vh;
+    }
+    .main_photo{
+        max-height: 69.5vh;
     }
     .block_prewie{
-        width: 40vw;
+        text-align: left;
+        overflow-y: hidden;
+        height: 30vh;
+        width: 100vw;
+        top: 70vh;
     }
-    .block_main{
-        width: 60vw;
+    .list_prewie{
+        display: inline-block;
+        height: 100%;
+        white-space: nowrap;
     }
     .item_prewie{
-        height: 120px;
+        display: inline-block;
+        height: 100%;
+        width: 250px;
+        margin: 3px;
     }
 }
-@media(max-width: 550px){
-    .block_main,
-    .scrollUp,
-    .scrollDown{
-        display: none;
+@media(max-width: 700px){
+    .item_prewie{
+        width: 220px;
     }
-    .block_prewie{
-        width: 100vw;
-    }
-    .small_photo {
-        object-fit: contain;
-    }
-    .item_prewie {
-        height: 250px;
-        background: rgb( 53, 51, 51 );
-        margin-top: 15px;
+}
+@media(max-width: 600px){
+    .item_prewie{
+        width: 200px;
     }
 }

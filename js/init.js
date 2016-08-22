@@ -29,11 +29,14 @@
     pubsub.publish( 'setWidth', document.body.clientWidth );
 
     window.onresize = function( event ) {
-        pubsub.publish( 'setWidth', document.body.clientWidth );
-        pubsub.publish( 'changeImg', document.body.clientWidth );
-    }
+        pubsub.publish( 'changeClass', document.body.clientWidth );
+    };
 
-    setTimeout(function(){
+    window.onload = function( event ) {
+        pubsub.publish( 'changeClass', document.body.clientWidth );
+    };
+
+    setTimeout(function() {
 
         storageAPI.getListImages()
         .then(function( result ) {
@@ -43,10 +46,10 @@
 
         })
         .fail(function( error ) {
+
             pubsub.publish( 'init_false' , 'Failed to load images' );
         });
 
-    }, 0 );
-
+    }, 200 );
 
 })();

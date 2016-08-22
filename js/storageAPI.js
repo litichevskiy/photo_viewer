@@ -1,7 +1,6 @@
 var storageAPI = (function(){
 
     return {
-
         getListImages : function() {
 
             var defer = $.Deferred(),
